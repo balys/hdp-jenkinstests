@@ -15,16 +15,16 @@ X - Not tested
 Y - Tested
 
 
-Structure for tests:
+Structure for tests, variables will be grabbed from jenkins multi-configuration matrix:
 
 ```
-HDPVERSION_OS.sh
+$ RUNNER.sh <OSVERSION> <HDPVERSION>
 ```
 
 
 For example:
 
 ```
-HDP2.5.0_CentOS7.sh
+$ RUNNER.sh CentOS7 2.5.0
 ```
 
