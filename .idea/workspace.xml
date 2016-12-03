@@ -2,22 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5780da57-210a-4985-9a24-56052f1c9b77" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/CDH5.8.0_CentOS6.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/CDH5.8.0_CentOS7.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/CDH5.8.0_Ubuntu.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.2.9_CentOS6.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.2.9_CentOS7.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.2.9_Ubuntu.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.3.6_CentOS6.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.3.6_CentOS7.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.3.6_Ubuntu.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.4.3_CentOS6.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.4.3_CentOS7.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.4.3_Ubuntu.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.5.0_CentOS6.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.5.0_CentOS7.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HDP2.5.0_Ubuntu.sh" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RUNNER.sh" afterPath="$PROJECT_DIR$/RUNNER.sh" />
     </list>
     <ignored path="hdp-jenkinstests.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -37,7 +22,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider editor-type-id="MarkdownFxPreviewEditor">
             <state />
@@ -53,6 +38,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="RUNNER.sh" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/RUNNER.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="165">
+              <caret line="183" column="0" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="Git.Settings">
@@ -63,6 +58,7 @@
       <list>
         <option value="$PROJECT_DIR$/HDP2.5.0_CentOS7.sh" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/RUNNER.sh" />
       </list>
     </option>
   </component>
@@ -192,6 +188,14 @@
             <folding />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RUNNER.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="183" column="0" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
