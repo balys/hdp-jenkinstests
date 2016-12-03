@@ -16,7 +16,7 @@ SERVERFLAVOR="general1-4"
 SSHKEY="root-hdp-jenkins"
 REGION="LON"
 OSIMAGE="4319b4ff-f887-4c52-9464-34536d202143"  # CentOS7
-KEYLOCATION=/root/.ssh/id_rsa2
+KEYLOCATION=/root/id_rsa2
 BUILDIDENTIFIER=`pwgen 20 1`
 
 ANSIBLEVERSION="2.1.3.0"
@@ -147,8 +147,8 @@ echo "List files in our temporary deployment [$DEPLOYTEMPFOLDER/$RELEASEFOLDER/]
 $WORKSTATIONSSH "ls -al $DEPLOYTEMPFOLDER/$RELEASEFOLDER"
 
 echo "Upload the SSH key - [$SSHKEY]"
-scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $KEYLOCATION /root/.ssh/id_rsa2 root@$SERVERIP:/root/.ssh/id_rsa
-scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $KEYLOCATION /root/.ssh/id_rsa2.pub root@$SERVERIP:/root/.ssh/id_rsa.pub
+scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $KEYLOCATION $KEYLOCATION root@$SERVERIP:/root/.ssh/id_rsa
+scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $KEYLOCATION $KEYLOCATION.pub root@$SERVERIP:/root/.ssh/id_rsa.pub
 
 echo "Run provisioning.."
 $WORKSTATIONSSH "cd $DEPLOYTEMPFOLDER/$RELEASEFOLDER; bash provision_rax.sh"
