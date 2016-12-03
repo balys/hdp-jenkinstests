@@ -178,7 +178,7 @@ sleep 0
 echo ""
 echo "Get a list of cloud servers created for this deployment.."
 
-$WORKSTATIONSSH "echo \"RAX_CREDS_FILE=/root/.raxpub RAX_REGION=$REGION $DEPLOYTEMPFOLDER/$RELEASEFOLDER/inventory/rax.py --list  | egrep $BUILDIDENTIFIER | cut -d \\\\\\\" -f2 | sort | uniq | grep -v rax_name \" > /tmp/serverlist-$BUILDIDENTIFIER.sh"
+$WORKSTATIONSSH "echo \"RAX_CREDS_FILE=/root/.raxpub RAX_REGION=$REGION $DEPLOYTEMPFOLDER/$RELEASEFOLDER/inventory/rax.py --list  | egrep $BUILDIDENTIFIER | grep -v HDP-testing-jenkins | cut -d \\\\\\\" -f2 | sort | uniq | grep -v rax_name \" > /tmp/serverlist-$BUILDIDENTIFIER.sh"
 $WORKSTATIONSSH "/bin/bash /tmp/serverlist-$BUILDIDENTIFIER.sh" > /tmp/serverlist-$BUILDIDENTIFIER.txt
 
 cat /tmp/serverlist-$BUILDIDENTIFIER.txt
