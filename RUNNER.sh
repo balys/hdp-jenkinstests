@@ -1,5 +1,17 @@
 #!/bin/bash
 
+
+#
+# TODO
+
+# 1. Separate builds for each OS
+# ubuntu - fe980b5a-43a0-400d-af56-f0412cadef88
+# centos6 - 1a8a4330-ae0d-4e0f-ad9f-6004b8be63c3
+# centos7 - 4319b4ff-f887-4c52-9464-34536d202143
+
+# 2. add exit codes after each step to fail the build if $? != 0
+
+
 # GLOBAL VARIABLES
 RAXACCOUNTID=`grep account /root/.raxpub  | awk {'print $3'}`
 RAXUSERNAME=`grep username /root/.raxpub  | awk {'print $3'}`
@@ -102,7 +114,7 @@ $WORKSTATIONSSH "echo \"---
 cluster_interface: 'eth0'
 cloud_nodes_count: 3
 cloud_image: 'CentOS 7 (PVHVM)'
-cloud_flavor: 'performance2-15'
+cloud_flavor: 'performance2-30'
 build_datanode_cbs: true
 cbs_disks_size: 100
 cbs_disks_type: 'SATA'
