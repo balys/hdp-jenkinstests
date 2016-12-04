@@ -150,3 +150,20 @@
       register: workstation_grouvars_all
 
     - debug: var=workstation_grouvars_all['stdout_lines']
+
+    - name: "Set up {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/master-nodes file"
+      template: src=master-nodes.j2 dest={{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/master-nodes
+
+    - name: "Set up {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/slave-nodes file"
+      template: src=slave-nodes.j2 dest={{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/slave-nodes
+
+    - name: "Set up {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/edge-nodes file"
+      template: src=edge-nodes.j2 dest={{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/edge-nodes
+
+    - copy:
+        src: "{{ key_location }}"
+        dest: /root/.ssh/id_rsa
+
+    - copy:
+        src: "{{ key_location }}.pub"
+        dest: /root/.ssh/id_rsa.pub

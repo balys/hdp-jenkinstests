@@ -41,6 +41,7 @@ ansible-playbook -vvvv -i inventory/localhost playbooks/runner.yml \
     deploytempfolder=$DEPLOYTEMPFOLDER \
     releasefolder=$RELEASEFOLDER \
     cloud_image=$OSIMAGE \
+    key_location=$KEYLOCATION \
     cloud_flavor=$SERVERFLAVOR \
     rax_deploy_region=$REGION \
     rax_account=$RAXACCOUNTID \
