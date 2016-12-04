@@ -61,15 +61,10 @@
 
     - name: Add workstation host to workstation_nodes ansible group
       add_host:
-        # name: "{{ workstation_node_details['json']['server']['accessIPv4'] }}"
-        # ansible_host: "{{ workstation_node_details['json']['server']['accessIPv4'] }}"
+        name: "{{ workstation_node_details['json']['server']['accessIPv4'] }}"
+        ansible_host: "{{ workstation_node_details['json']['server']['accessIPv4'] }}"
         ansible_user: root
-        # ansible_ssh_pass: "{{ workstation_node_info['json']['server']['adminPass'] }}"
-
-        name: "162.13.191.122"
-        ansible_host: "162.13.191.122"
-        ansible_ssh_pass: "Y2Jz6iqZvgfB"
-
+        ansible_ssh_pass: "{{ workstation_node_info['json']['server']['adminPass'] }}"
         ansible_ssh_extra_args: "-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
         groups: workstation_nodes
 
