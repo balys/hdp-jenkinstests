@@ -11,7 +11,6 @@
 
 # 2. add exit codes after each step to fail the build if $? != 0
 
-
 # GLOBAL VARIABLES
 RAXACCOUNTID=`grep account /root/.raxpub  | awk {'print $3'}`
 RAXUSERNAME=`grep username /root/.raxpub  | awk {'print $3'}`
@@ -23,17 +22,18 @@ RAXAUTHTOKEN=`curl -s https://identity.api.rackspacecloud.com/v2.0/tokens -X POS
 # VARIABLES SPECIFIC TO THIS BUILD
 OSVERSION=$1
 HDPVERSION=$2
-
-SERVERFLAVOR="general1-4"
-SSHKEY="root-hdp-jenkins"
-REGION="LON"
-OSIMAGE="4319b4ff-f887-4c52-9464-34536d202143"  # CentOS7
-KEYLOCATION=/root/id_rsa2
 BUILDIDENTIFIER=`pwgen 20 1`
-
+REGION="LON"
 ANSIBLEVERSION="2.1.3.0"
 DEPLOYTEMPFOLDER="/root/tmp/ansible-hadoop-BUILDTEST"
 RELEASEFOLDER="OPERATINGSYSTEM/$OSVERSION/VERSION/$HDPVERSION"
+
+
+# Workstation server settings
+SERVERFLAVOR="general1-4"
+SSHKEY="root-hdp-jenkins"
+KEYLOCATION=/root/id_rsa2
+OSIMAGE="4319b4ff-f887-4c52-9464-34536d202143"  # CentOS7
 
 
 #_-----------------------

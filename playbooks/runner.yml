@@ -1,0 +1,152 @@
+---
+- name: Create a Remote Workstation and deploy Hadoop
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: Get RAX authentication token
+      uri:
+        url: "https://identity.api.rackspacecloud.com/v2.0/tokens"
+        method: POST
+        return_content: true
+        status_code: 200
+        body_format: json
+        headers:
+          "Content-Type" : "application/json"
+        body:
+          "auth":
+            "RAX-KSKEY:apiKeyCredentials":
+              "username": "{{ rax_username }}"
+              "apiKey":   "{{ rax_apikey }}"
+      register: rax_auth_info
+
+    #- name: Show info
+    #  debug: var=rax_auth_info['json']['access']
+
+    - name: Create Workstation Node in RAX Cloud
+      uri:
+        url: "https://{{ rax_deploy_region }}.servers.api.rackspacecloud.com/v2/{{rax_account}}/servers"
+        method: POST
+        return_content: true
+        status_code: 202
+        body_format: json
+        headers:
+          "Content-Type" : "application/json"
+          "X-Auth-Token" : "{{ rax_auth_info.json.access.token.id }}"
+        body:
+          "server" :
+            "name": "HDP-testing-jenkins-{{ buildidentifier }}"
+            "imageRef": "{{ cloud_image }}"
+            "flavorRef": "{{ cloud_flavor }}"
+            "key_name": "{{ ssh_keyname }}"
+      register: workstation_node_info
+
+    - name: Pause for 2 minutes for the Workstation to come online
+      pause:
+        minutes: 0
+
+    - name: Get Workstation Node Information
+      uri:
+        url: "https://{{ rax_deploy_region }}.servers.api.rackspacecloud.com/v2/{{rax_account}}/servers/{{ workstation_node_info.json.server.id }}"
+        method: GET
+        return_content: true
+        status_code: 200
+        headers:
+          "Content-Type" : "application/json"
+          "X-Auth-Token" : "{{ rax_auth_info.json.access.token.id }}"
+      register: workstation_node_details
+
+    - name: Show Workstation IP
+      debug: var=workstation_node_details['json']['server']['accessIPv4']
+
+    - name: Add workstation host to workstation_nodes ansible group
+      add_host:
+        # name: "{{ workstation_node_details['json']['server']['accessIPv4'] }}"
+        # ansible_host: "{{ workstation_node_details['json']['server']['accessIPv4'] }}"
+        ansible_user: root
+        # ansible_ssh_pass: "{{ workstation_node_info['json']['server']['adminPass'] }}"
+
+        name: "162.13.191.122"
+        ansible_host: "162.13.191.122"
+        ansible_ssh_pass: "Y2Jz6iqZvgfB"
+
+        ansible_ssh_extra_args: "-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+        groups: workstation_nodes
+
+    - name: Clean up temp folder for repo archive
+      file:
+        path: /tmp/ansible-hadoop-BUILDTEST
+        state: absent
+
+    - name: Copy repo files to temp folder
+      command: cp -a /var/lib/jenkins/workspace/ansible-hadoop /tmp/ansible-hadoop-BUILDTEST
+
+    - name: Create an archive of temp repository folder
+      command: tar czf /tmp/HDP-testing-jenkins-{{ buildidentifier }}.tgz /tmp/ansible-hadoop-BUILDTEST
+
+
+
+- name: Perform steps on workstation server
+  hosts: workstation_nodes
+  connection: ssh
+  gather_facts: False
+  tasks:
+    - name: Run "w" on workstation server
+      command: w
+      register: outputw
+
+    - debug: var=outputw['stdout_lines']
+
+    - name: Upload and extract ansible-hadoop repo contents to {{ deploytempfolder }}
+      unarchive:
+        src: /tmp/HDP-testing-jenkins-{{ buildidentifier }}.tgz
+        dest: /root
+
+    - name: Run "ls -alh {{ deploytempfolder }}" on workstation server
+      command: ls -alh {{ deploytempfolder }}
+      register: outputfind
+
+    - debug: var=outputfind['stdout_lines']
+
+    - name: Run "ls -alh {{ deploytempfolder }}/{{ releasefolder }}" on workstation server
+      command: ls -alh {{ deploytempfolder }}/{{ releasefolder }}
+      register: outputfind
+
+    - debug: var=outputfind['stdout_lines']
+
+    - name: "Install required yum packages on workstation"
+      yum: name={{ item }} state=installed
+      with_flattened:
+        - "python-virtualenv"
+        - "python-pip"
+        - "python-devel"
+        - "sshpass"
+        - "git"
+        - "vim-enhanced"
+        - "libffi"
+        - "libffi-devel"
+        - "gcc"
+        - "openssl-devel"
+
+    - name: "Install ansible {{ workstation_ansibleversion }} on workstation"
+      pip:
+        name: "ansible=={{ workstation_ansibleversion }}"
+
+    - name: "Install pyrax on workstation"
+      pip:
+        name: "pyrax"
+
+    - name: "Set up pyrax credentials file"
+      template: src=raxpub.j2 dest=/root/.raxpub
+
+    - name: "Make changes in {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all.."
+      command: sed -i "s/hadoop-ssh-key/{{ ssh_keyname }}/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+    - command: sed -i "s/localnet/{{ buildidentifier }}/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+    - command: sed -i "s/rax_region{{ ":" }} 'ORD'/rax_region{{ ":" }} '{{ rax_deploy_region }}' /g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+    - command: sed -i "s/use_dns{{ ":" }} true/use_dns{{ ":" }} false/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+
+    - name: "Check contents of updated {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all file"
+      command: cat {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+      register: workstation_grouvars_all
+
+    - debug: var=workstation_grouvars_all['stdout_lines']
