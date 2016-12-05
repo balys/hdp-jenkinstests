@@ -1,15 +1,15 @@
 #!/bin/bash
 
-
 #
-# TODO
-
-# 1. Separate builds for each OS
-# ubuntu - fe980b5a-43a0-400d-af56-f0412cadef88
-# centos6 - 1a8a4330-ae0d-4e0f-ad9f-6004b8be63c3
-# centos7 - 4319b4ff-f887-4c52-9464-34536d202143
-
-# 2. add exit codes after each step to fail the build if $? != 0
+#
+#
+# THIS IS DEPRECATED IN FAVOR OF runner_ansible.sh
+#
+#
+#
+#
+#
+exit 0
 
 # GLOBAL VARIABLES
 RAXACCOUNTID=`grep account /root/.raxpub  | awk {'print $3'}`
@@ -43,52 +43,41 @@ BRLINE="\n----------------------------------------------------------------------
 
 echo "Creating a workstation server named [HDP-testing-jenkins-$BUILDIDENTIFIER] in Rackspace Cloud.."
 SERVERID=`curl -s -X POST https://$REGION.servers.api.rackspacecloud.com/v2/$RAXACCOUNTID/servers -d "{\"server\" : {\"name\" : \"HDP-testing-jenkins-$BUILDIDENTIFIER\",\"imageRef\": \"$OSIMAGE\",\"flavorRef\": \"$SERVERFLAVOR\", \"key_name\": \"$SSHKEY\"}}" -H "Content-Type: application/json" -H "X-Auth-Token: $RAXAUTHTOKEN" | python -m json.tool | grep '"id"' | awk {'print $2'} | cut -d\" -f2`
-# SERVERID="8176d990-eaa2-43bc-9ea9-63885e47713f"
-# SERVERID=e0118434-ef26-4a5c-b40f-f81ca90bac00
 
 echo "Created server with ID $SERVERID.."
 
 echo "Waiting 120 seconds for workstation server to come up.."
 sleep 120
 
-
 echo "Get IP address of workstation server.."
 SERVERIP=`curl -s -X GET https://$REGION.servers.api.rackspacecloud.com/v2/$RAXACCOUNTID/servers/$SERVERID  -H "X-Auth-Token: $RAXAUTHTOKEN" | python -m json.tool | grep "accessIPv4"| awk {'print $2'} | cut -d\" -f2`
-
 
 echo "Testing SSH access to cloud server with IP $SERVERIP.."
 WORKSTATIONSSH="ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l root -i $KEYLOCATION $SERVERIP"
 echo `$WORKSTATIONSSH "whoami;hostname"`
 
-
 echo "Copying the repo folder to temporary location.."
 rm -rf /tmp/ansible-hadoop-BUILDTEST
 cp -a /var/lib/jenkins/workspace/ansible-hadoop /tmp/ansible-hadoop-BUILDTEST
-
 
 echo "Archiving the repo folder and uploading to workstation server [HDP-testing-jenkins-$BUILDIDENTIFIER]"
 cd /tmp
 tar czf /tmp/HDP-testing-jenkins-$BUILDIDENTIFIER.tgz /tmp/ansible-hadoop-BUILDTEST
 
-
 echo "Cleanup,extract the repo folder to /root/tmp/ansible-hadoop-BUILDTEST on workstation"
 scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $KEYLOCATION /tmp/HDP-testing-jenkins-$BUILDIDENTIFIER.tgz root@$SERVERIP:/tmp
 $WORKSTATIONSSH "rm -rf $DEPLOYTEMPFOLDER; tar xf /tmp/HDP-testing-jenkins-$BUILDIDENTIFIER.tgz; ls -al $DEPLOYTEMPFOLDER"
-
 
 echo "Install required yum and pip packages on workstation"
 $WORKSTATIONSSH "yum -y install epel-release || yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
 $WORKSTATIONSSH "yum install python-virtualenv python-pip python-devel sshpass git vim-enhanced libffi libffi-devel gcc openssl-devel -y"
 $WORKSTATIONSSH "pip install ansible==$ANSIBLEVERSION pyrax"
 
-
 echo "Check ansible version"
 $WORKSTATIONSSH "ansible --version | head -1"
 
-
 echo "Set up pyrax module credentials for access to Rackspace Cloud"
 $WORKSTATIONSSH "echo -e \"[rackspace_cloud]\nusername = $RAXUSERNAME\napi_key = $RAXAPIKEY\" > /root/.raxpub"
-
 
 echo "Change ansible-hadoop variables specific to build [$OSVERSION] [$HDPVERSION].."
 echo ""
@@ -125,7 +114,6 @@ datanode_disks: ['xvdf', 'xvdg']
 \" > $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/master-nodes"
 $WORKSTATIONSSH "cat $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/master-nodes"
 
-
 echo "Settings for [slavenode] deployment from $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/slave-nodes-templates.."
 $WORKSTATIONSSH "echo \"---
 
@@ -140,7 +128,6 @@ datanode_disks: ['xvdf','xvdg']
 \" > $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/slave-nodes"
 $WORKSTATIONSSH "cat $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/slave-nodes"
 
-
 echo "Settings for [edgenode] deployment from $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/edge-nodes.."
 $WORKSTATIONSSH "echo \"---
 
@@ -151,7 +138,6 @@ cloud_flavor: 'performance2-15'
 hadoop_disk: xvde
 \" > $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/edge-nodes"
 $WORKSTATIONSSH "cat $DEPLOYTEMPFOLDER/$RELEASEFOLDER/playbooks/group_vars/edge-nodes"
-
 
 # Running scripts which trigger ansible..
 
@@ -179,8 +165,6 @@ $WORKSTATIONSSH "cd $DEPLOYTEMPFOLDER/$RELEASEFOLDER; bash hortonworks_rax.sh"
 
 echo "Sleeping for 30 seconds.."
 sleep 0
-
-
 
 
 #_-----------------------

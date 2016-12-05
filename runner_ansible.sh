@@ -1,11 +1,8 @@
 #!/bin/bash
 
 # VARIABLES SPECIFIC TO THIS BUILD
-# OSVERSION=$1
-# HDPVERSION=$2
-
-OSVERSION=CentOS7
-HDPVERSION=HDP2.5.0
+OSVERSION=$1
+HDPVERSION=$2
 
 # GLOBAL VARIABLES
 rax_credentials_file="~/.raxpub"
@@ -16,6 +13,7 @@ RAXAPIKEY=`grep api_key ~/.raxpub  | awk {'print $3'}`
 
 # Set other vars we will use in ansible
 BUILDIDENTIFIER=`pwgen 20 1`
+
 REGION="LON"
 ANSIBLEVERSION="2.1.3.0"
 DEPLOYTEMPFOLDER="/root/tmp/ansible-hadoop-BUILDTEST"
