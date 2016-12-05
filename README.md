@@ -33,11 +33,12 @@ $ runner_ansible.sh CentOS7 2.5.0
 
 
 The testing is performed by: 
-* bootstraping a new workstation node in RAX cloud
-* setting up workstation node to specifications listed in ansible-hadoop repo
-* copying over the current repofiles from jenkins server
-* editing the configuration to specific build folder on workstation server
-* deploying HDP/CDH based with this configuration.
+* Bootstraping a new workstation node in RAX cloud
+* Setting up workstation node to specifications listed in ansible-hadoop repo
+* Copying over the current repofiles from jenkins server to workstation
+* Editing the repofiles configuration (in specific build folder) on workstation server
+* Deploying HDP/CDH based with this configuration, from the workstation server
+* Clean up afterwards, delete all servers and cbs volumes created.
 
 The integration test is written in ansible, the trigger script is bash.
 
