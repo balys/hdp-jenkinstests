@@ -137,6 +137,12 @@
     - command: sed -i "s/localnet/{{ buildidentifier }}/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
     - command: sed -i "s/rax_region{{ ":" }} 'ORD'/rax_region{{ ":" }} '{{ rax_deploy_region }}' /g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
     - command: sed -i "s/use_dns{{ ":" }} true/use_dns{{ ":" }} false/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+    - command: sed -i "s/distro{{ ":" }} 'hdp'/distro{{ ":" }} '{{ hadoop_build }}'/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+
+    - name: "Update the {{ hadoop_build }} version to {{ hadoop_version }} in {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/hortonworks"
+      command: sed -i "s/hdp_version{{ ":" }} '2.5'/hdp_version{{ ":" }} '{{ hadoop_version }}'/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/hortonworks
+
+   # We are not updating the CDH version as we are testing one version, which is already in the config file.
 
     - name: "Check contents of updated {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all file"
       command: cat {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all

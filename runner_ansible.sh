@@ -4,12 +4,20 @@
 OSVERSION=$1
 HDPVERSION=$2
 
-# GLOBAL VARIABLES
-rax_credentials_file="~/.raxpub"
+if [ $OSVERSION == "CentOS7" ]; then RAX_OS="CentOS 7 (PVHVM)"; fi
+if [ $OSVERSION == "CentOS6" ]; then RAX_OS="CentOS 6 (PVHVM)"; fi
+if [ $OSVERSION == "Ubuntu" ]; then RAX_OS="Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)"; fi
 
-RAXACCOUNTID=`grep account ~/.raxpub  | awk {'print $3'}`
-RAXUSERNAME=`grep username ~/.raxpub  | awk {'print $3'}`
-RAXAPIKEY=`grep api_key ~/.raxpub  | awk {'print $3'}`
+HADOOP_TYPE=${HDPVERSION:0:3} | tr '[:upper:]' '[:lower:]'
+HADOOP_VERSION=${HDPVERSION:3:6}
+
+
+# GLOBAL VARIABLES
+RAXCREDS="~/.raxpub"
+
+RAXACCOUNTID=`grep account $RAXCREDS  | awk {'print $3'}`
+RAXUSERNAME=`grep username $RAXCREDS  | awk {'print $3'}`
+RAXAPIKEY=`grep api_key $RAXCREDS  | awk {'print $3'}`
 
 # Set other vars we will use in ansible
 BUILDIDENTIFIER=`pwgen 20 1`
@@ -34,7 +42,10 @@ export "ANSIBLE_HOST_KEY_CHECKING=False"
 
 ansible-playbook -vvvv -i inventory/localhost playbooks/runner.yml \
   --extra-vars "\
-    rax_credentials_file=$rax_credentials_file \
+    rax_credentials_file=$RAXCREDS \
+    rax_os=$RAX_OS \
+    hadoop_build=$HADOOP_TYPE \
+    hadoop_version=$HADOOP_VERSION \
     buildidentifier=$BUILDIDENTIFIER \
     deploytempfolder=$DEPLOYTEMPFOLDER \
     releasefolder=$RELEASEFOLDER \
