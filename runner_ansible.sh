@@ -13,11 +13,11 @@ HADOOP_VERSION=${HDPVERSION:3:6}
 
 
 # GLOBAL VARIABLES
-RAXCREDS="/var/lib/jenkins/.raxpub"
+RAXCREDS="~/.raxpub"
 
-RAXACCOUNTID=`grep account $RAXCREDS  | awk {'print $3'}`
-RAXUSERNAME=`grep username $RAXCREDS  | awk {'print $3'}`
-RAXAPIKEY=`grep api_key $RAXCREDS  | awk {'print $3'}`
+RAXACCOUNTID=`grep account /var/lib/jenkins/.raxpub | awk {'print $3'}`
+RAXUSERNAME=`grep username /var/lib/jenkins/.raxpub | awk {'print $3'}`
+RAXAPIKEY=`grep api_key /var/lib/jenkins/.raxpub | awk {'print $3'}`
 
 # Set other vars we will use in ansible
 BUILDIDENTIFIER=`pwgen 20 1`
