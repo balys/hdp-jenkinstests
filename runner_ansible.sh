@@ -13,7 +13,7 @@ HADOOP_VERSION=${HDPVERSION:3:6}
 
 
 # GLOBAL VARIABLES
-RAXCREDS="~/.raxpub"
+RAXCREDS="/var/lib/jenkins/.raxpub"
 
 RAXACCOUNTID=`grep account $RAXCREDS  | awk {'print $3'}`
 RAXUSERNAME=`grep username $RAXCREDS  | awk {'print $3'}`
