@@ -160,7 +160,7 @@
       template: src=edge-nodes.j2 dest={{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/edge-nodes
 
 
-    - name: Copy over the private, public keys for {{ key_name }} to workstation server, and set permissions.
+    - name: Copy over the private, public keys for {{ key_location }} to workstation server, and set permissions.
       copy:
         src: "{{ key_location }}"
         dest: /root/.ssh/id_rsa

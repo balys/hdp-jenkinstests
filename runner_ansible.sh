@@ -43,7 +43,7 @@ export "ANSIBLE_HOST_KEY_CHECKING=False"
 ansible-playbook -vvvv -i inventory/localhost playbooks/runner.yml \
   --extra-vars "\
     rax_credentials_file=$RAXCREDS \
-    rax_os=$RAX_OS \
+    rax_os=\"$RAX_OS\" \
     hadoop_build=$HADOOP_TYPE \
     hadoop_version=$HADOOP_VERSION \
     buildidentifier=$BUILDIDENTIFIER \
