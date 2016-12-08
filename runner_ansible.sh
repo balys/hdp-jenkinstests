@@ -9,7 +9,7 @@ if [ $OSVERSION == "CentOS6" ]; then RAX_OS="CentOS 6 (PVHVM)"; fi
 if [ $OSVERSION == "Ubuntu" ]; then RAX_OS="Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)"; fi
 
 HADOOP_TYPE=`echo ${HDPVERSION:0:3} | tr '[:upper:]' '[:lower:]'`
-HADOOP_VERSION=${HDPVERSION:3:6}
+HADOOP_VERSION=${HDPVERSION:3:3}
 
 
 # GLOBAL VARIABLES
