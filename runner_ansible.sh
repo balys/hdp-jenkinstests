@@ -22,7 +22,7 @@ RAXAPIKEY=`grep api_key /var/lib/jenkins/.raxpub | awk {'print $3'}`
 # Set other vars we will use in ansible
 BUILDIDENTIFIER=`pwgen 20 1`
 
-REGION="LON"
+REGION="DFW"
 ANSIBLEVERSION="2.1.3.0"
 DEPLOYTEMPFOLDER="/root/tmp/ansible-hadoop-BUILDTEST"
 RELEASEFOLDER="OPERATINGSYSTEM/$OSVERSION/VERSION/$HDPVERSION"
