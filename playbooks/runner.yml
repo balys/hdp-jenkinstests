@@ -70,18 +70,6 @@
         ansible_ssh_extra_args: "-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
         groups: workstation_nodes
 
-    - name: Clean up temp folder for repo archive
-      file:
-        path: /tmp/ansible-hadoop-BUILDTEST
-        state: absent
-
-    - name: Copy repo files to temp folder
-      command: cp -a /var/lib/jenkins/workspace/ansible-hadoop /tmp/ansible-hadoop-BUILDTEST
-
-    - name: Create an archive of temp repository folder
-      command: tar czf /tmp/HDP-testing-jenkins-{{ buildidentifier }}.tgz /tmp/ansible-hadoop-BUILDTEST
-
-
 #
 # Set-up workstation
 #
@@ -96,13 +84,19 @@
 
     - debug: var=outputw['stdout_lines']
 
-    - name: Upload and extract ansible-hadoop repo contents to {{ deploytempfolder }}
-      unarchive:
-        src: /tmp/HDP-testing-jenkins-{{ buildidentifier }}.tgz
-        dest: /root
+    - name: Git clone ansible-hadoop repo to {{ deploytempfolder }}
+      git:
+        repo: https://github.com/rackerlabs/ansible-hadoop.git
+        dest: {{ deploytempfolder }}
+        refspec: '+refs/pull/*:refs/heads/*'
 
-    - name: Run "ls -alh {{ deploytempfolder }}/{{ releasefolder }}" on workstation server
-      command: ls -alh {{ deploytempfolder }}/{{ releasefolder }}
+    - name: Git checkout to the Pull request {{ git_pullrequest }} branch
+      command: git checkout pr/{{ git_pullrequest }}
+      args:
+        chdir: "{{ deploytempfolder }}"
+
+    - name: Run "ls -alh {{ deploytempfolder }}" on workstation server
+      command: ls -alh {{ deploytempfolder }}
       register: outputfind
 
     - debug: var=outputfind['stdout_lines']
@@ -132,32 +126,32 @@
     - name: "Set up pyrax credentials file"
       template: src=raxpub.j2 dest={{ rax_credentials_file }}
 
-    - name: "Make changes in {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all.."
-      command: sed -i "s/hadoop-ssh-key/{{ ssh_keyname }}/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
-    - command: sed -i "s/localnet/{{ buildidentifier }}/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
-    - command: sed -i "s/rax_region{{ ":" }} 'ORD'/rax_region{{ ":" }} '{{ rax_deploy_region }}' /g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
-    - command: sed -i "s/use_dns{{ ":" }} true/use_dns{{ ":" }} false/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
-    - command: sed -i "s/distro{{ ":" }} 'hdp'/distro{{ ":" }} '{{ hadoop_build }}'/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+    - name: "Make changes in {{ deploytempfolder }}/playbooks/group_vars/all.."
+      command: sed -i "s/hadoop-ssh-key/{{ ssh_keyname }}/g" {{ deploytempfolder }}/playbooks/group_vars/all
+    - command: sed -i "s/localnet/{{ buildidentifier }}/g" {{ deploytempfolder }}/playbooks/group_vars/all
+    - command: sed -i "s/rax_region{{ ":" }} 'ORD'/rax_region{{ ":" }} '{{ rax_deploy_region }}' /g" {{ deploytempfolder }}/playbooks/group_vars/all
+    - command: sed -i "s/use_dns{{ ":" }} true/use_dns{{ ":" }} false/g" {{ deploytempfolder }}/playbooks/group_vars/all
+    - command: sed -i "s/distro{{ ":" }} 'hdp'/distro{{ ":" }} '{{ hadoop_build }}'/g" {{ deploytempfolder }}/playbooks/group_vars/all
 
-    - name: "Update the {{ hadoop_build }} version to {{ hadoop_version }} in {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/hortonworks"
-      command: sed -i "s/hdp_version{{ ":" }} '2.5'/hdp_version{{ ":" }} '{{ hadoop_version }}'/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/hortonworks
+    - name: "Update the {{ hadoop_build }} version to {{ hadoop_version }} in {{ deploytempfolder }}/playbooks/group_vars/hortonworks"
+      command: sed -i "s/hdp_version{{ ":" }} '2.5'/hdp_version{{ ":" }} '{{ hadoop_version }}'/g" {{ deploytempfolder }}/playbooks/group_vars/hortonworks
 
    # We are not updating the CDH version as we are testing one version, which is already in the config file.
 
-    - name: "Check contents of updated {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all file"
-      command: cat {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
+    - name: "Check contents of updated {{ deploytempfolder }}/playbooks/group_vars/all file"
+      command: cat {{ deploytempfolder }}/playbooks/group_vars/all
       register: workstation_groupvars_all
 
     - debug: var=workstation_groupvars_all['stdout_lines']
 
-    - name: "Set up {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/master-nodes file"
-      template: src=master-nodes.j2 dest={{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/master-nodes
+    - name: "Set up {{ deploytempfolder }}/playbooks/group_vars/master-nodes file"
+      template: src=master-nodes.j2 dest={{ deploytempfolder }}/playbooks/group_vars/master-nodes
 
-    - name: "Set up {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/slave-nodes file"
-      template: src=slave-nodes.j2 dest={{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/slave-nodes
+    - name: "Set up {{ deploytempfolder }}/playbooks/group_vars/slave-nodes file"
+      template: src=slave-nodes.j2 dest={{ deploytempfolder }}/playbooks/group_vars/slave-nodes
 
-    - name: "Set up {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/edge-nodes file"
-      template: src=edge-nodes.j2 dest={{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/edge-nodes
+    - name: "Set up {{ deploytempfolder }}/playbooks/group_vars/edge-nodes file"
+      template: src=edge-nodes.j2 dest={{ deploytempfolder }}/playbooks/group_vars/edge-nodes
 
 
     - name: Copy over the private, public keys for {{ key_location }} to workstation server, and set permissions.
@@ -186,7 +180,7 @@
     - name: Run provision_rax.sh on workstation server
       command: /bin/bash provision_rax.sh
       args:
-        chdir: "{{ deploytempfolder }}/{{ releasefolder }}"
+        chdir: "{{ deploytempfolder }}"
       register: workstation_provision_rax
 
     - debug: var=workstation_provision_rax['stdout_lines']
@@ -195,7 +189,7 @@
     - name: Run bootstrap_rax.sh on workstation server
       command: /bin/bash bootstrap_rax.sh
       args:
-        chdir: "{{ deploytempfolder }}/{{ releasefolder }}"
+        chdir: "{{ deploytempfolder }}"
       register: workstation_bootstrap_rax
 
     - debug: var=workstation_bootstrap_rax['stdout_lines']
@@ -204,7 +198,7 @@
     - name: Run hortonworks_rax.sh on workstation server
       command: /bin/bash hortonworks_rax.sh
       args:
-        chdir: "{{ deploytempfolder }}/{{ releasefolder }}"
+        chdir: "{{ deploytempfolder }}"
       register: workstation_hortonworks_rax
 
     - debug: var=workstation_hortonworks_rax['stdout_lines']

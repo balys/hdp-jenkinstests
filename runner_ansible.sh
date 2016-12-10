@@ -3,6 +3,7 @@
 # VARIABLES SPECIFIC TO THIS BUILD
 OSVERSION=$1
 HDPVERSION=$2
+PRNUMBER=$3
 
 if [ $OSVERSION == "CentOS7" ]; then RAX_OS="CentOS 7 (PVHVM)"; fi
 if [ $OSVERSION == "CentOS6" ]; then RAX_OS="CentOS 6 (PVHVM)"; fi
@@ -25,7 +26,6 @@ BUILDIDENTIFIER=`pwgen 20 1`
 REGION="DFW"
 ANSIBLEVERSION="2.1.3.0"
 DEPLOYTEMPFOLDER="/root/tmp/ansible-hadoop-BUILDTEST"
-RELEASEFOLDER="OPERATINGSYSTEM/$OSVERSION/VERSION/$HDPVERSION"
 
 # Deployment Workstation server settings
 SERVERFLAVOR="general1-4"
@@ -48,7 +48,6 @@ ansible-playbook -vvvv -i inventory/localhost playbooks/runner.yml \
     hadoop_version=$HADOOP_VERSION \
     buildidentifier=$BUILDIDENTIFIER \
     deploytempfolder=$DEPLOYTEMPFOLDER \
-    releasefolder=$RELEASEFOLDER \
     cloud_image=$OSIMAGE \
     key_location=$KEYLOCATION \
     cloud_flavor=$SERVERFLAVOR \
@@ -56,5 +55,6 @@ ansible-playbook -vvvv -i inventory/localhost playbooks/runner.yml \
     rax_account=$RAXACCOUNTID \
     rax_username=$RAXUSERNAME \
     rax_apikey=$RAXAPIKEY \
+    git_pullrequest=$PRNUMBER \
     workstation_ansibleversion=$ANSIBLEVERSION \
     ssh_keyname=$SSHKEY "
