@@ -82,11 +82,8 @@
       command: tar czf /tmp/HDP-testing-jenkins-{{ buildidentifier }}.tgz /tmp/ansible-hadoop-BUILDTEST
 
 
-# Clean up any residue servers created by other runs
-- include: cleaner_pre.yml
-
 #
-# WORKSTATION STEPS
+# Set-up workstation
 #
 - name: Perform steps on workstation server
   hosts: workstation_nodes
@@ -175,6 +172,17 @@
         dest: /root/.ssh/id_rsa.pub
 
 
+# Clean up any residue servers created by other runs
+- include: cleaner_pre.yml
+
+#
+# Deploy the cluster
+#
+- name: Deploy the cluster from workstation
+  hosts: workstation_nodes
+  connection: ssh
+  gather_facts: False
+  tasks:
     - name: Run provision_rax.sh on workstation server
       command: /bin/bash provision_rax.sh
       args:
