@@ -81,10 +81,13 @@
     - name: Create an archive of temp repository folder
       command: tar czf /tmp/HDP-testing-jenkins-{{ buildidentifier }}.tgz /tmp/ansible-hadoop-BUILDTEST
 
+
+# Clean up any residue servers created by other runs
+- include: cleaner_pre.yml
+
 #
 # WORKSTATION STEPS
 #
-
 - name: Perform steps on workstation server
   hosts: workstation_nodes
   connection: ssh
@@ -199,66 +202,6 @@
     - debug: var=workstation_hortonworks_rax['stdout_lines']
 
 
-    - name: Get a list of cloud servers created for this deployment
-      shell: RAX_CREDS_FILE={{ rax_credentials_file }} RAX_REGION={{ rax_deploy_region }} python inventory/rax.py --list
-      args:
-        chdir: "{{ deploytempfolder }}/{{ releasefolder }}"
-      register: rax_server_list
+# Remove the servers created for this deployment
+- include: cleaner_post.yml
 
-    - set_fact:
-        rax_server_list_json: "{{ rax_server_list.stdout|from_json }}"
-
-    - debug: var=rax_server_list_json._meta.hostvars
-
-    - name: Delete the master, slave, edge node cloud servers we deployed
-      uri:
-        url: "https://{{ rax_deploy_region }}.servers.api.rackspacecloud.com/v2/{{rax_account}}/servers/{{ item.value.rax_id }}"
-        method: DELETE
-        return_content: true
-        status_code: 204
-        headers:
-          "Content-Type" : "application/json"
-          "X-Auth-Token" : "{{ hostvars.localhost.rax_auth_info.json.access.token.id }}"
-      when:
-        - item.value.rax_metadata.group is defined
-        - item.value.rax_metadata.group == "slave-nodes" or item.value.rax_metadata.group == "master-nodes" or item.value.rax_metadata.group == "edge-nodes"
-      with_dict: "{{ rax_server_list_json._meta.hostvars }}"
-
-    - name: Pause for 2 minutes for servers to really be deleted
-      pause:
-        minutes: 2
-
-    - name: Get all CBS volumes that were created for the deployment
-      uri:
-        url: "https://{{ rax_deploy_region }}.blockstorage.api.rackspacecloud.com/v1/{{rax_account}}/volumes"
-        method: GET
-        return_content: true
-        status_code: 200
-        headers:
-          "Content-Type" : "application/json"
-          "X-Auth-Token" : "{{ hostvars.localhost.rax_auth_info.json.access.token.id }}"
-      register: rax_cbs_volume_list
-
-    - name: Delete CBS volumes that we created
-      uri:
-        url: "https://{{ rax_deploy_region }}.blockstorage.api.rackspacecloud.com/v1/{{rax_account}}/volumes/{{ item.id }}"
-        method: DELETE
-        return_content: true
-        status_code: 202
-        headers:
-          "Content-Type" : "application/json"
-          "X-Auth-Token" : "{{ hostvars.localhost.rax_auth_info.json.access.token.id }}"
-      when:
-        - buildidentifier|length == 20
-        - buildidentifier in item.display_name
-      with_items: "{{ rax_cbs_volume_list.json.volumes }}"
-
-    - name: Delete the workstation node
-      uri:
-        url: "https://{{ rax_deploy_region }}.servers.api.rackspacecloud.com/v2/{{rax_account}}/servers/{{ hostvars.localhost.workstation_node_details.json.server.id }}"
-        method: DELETE
-        return_content: true
-        status_code: 204
-        headers:
-          "Content-Type" : "application/json"
-          "X-Auth-Token" : "{{ hostvars.localhost.rax_auth_info.json.access.token.id }}"
