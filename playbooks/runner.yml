@@ -207,14 +207,14 @@
       args:
         chdir: "{{ deploytempfolder }}/{{ releasefolder }}"
       register: workstation_hadoop_rax
-      when: "{{ hadoop_build }}" == "hdp"
+      when: hadoop_build == "hdp"
 
     - name: Run cloudera_rax.sh on workstation server
       command: /bin/bash cloudera_rax.sh
       args:
         chdir: "{{ deploytempfolder }}/{{ releasefolder }}"
       register: workstation_hadoop_rax
-      when: "{{ hadoop_build }}" == "cdh"
+      when: hadoop_build == "cdh"
 
     - debug: var=workstation_hadoop_rax['stdout_lines']
 
