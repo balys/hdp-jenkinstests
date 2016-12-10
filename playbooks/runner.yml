@@ -87,7 +87,7 @@
     - name: Git clone ansible-hadoop repo to {{ deploytempfolder }}
       git:
         repo: https://github.com/rackerlabs/ansible-hadoop.git
-        dest: {{ deploytempfolder }}
+        dest: "{{ deploytempfolder }}"
         refspec: '+refs/pull/*:refs/heads/*'
 
     - name: Git checkout to the Pull request {{ git_pullrequest }} branch
