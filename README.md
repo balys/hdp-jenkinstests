@@ -8,14 +8,14 @@ Plans are to test these deployment setups:
 
 | HDP Version  | CentOS7 | CentOS6 | Ubuntu |
 | ------------ | ------- | ------ | ------- |
-| 2.2  | X  | X  | X  | X  |
-| 2.3  | X  | X  | X  | X  |
-| 2.4  | X  | X  | X  | X  |
-| 2.5  | X  | X  | X  | X  |
+| 2.2  | X  | X  | X  |
+| 2.3  | X  | X  | X  |
+| 2.4  | X  | X  | X  |
+| 2.5  | Y  | X  | Y  |
 
 
-X - Not tested
-Y - Tested
+X - Test failing
+Y - Test passing
 
 
 Structure for tests, variables will be grabbed from jenkins multi-configuration matrix:
