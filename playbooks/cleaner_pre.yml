@@ -1,5 +1,6 @@
- ---
- - name: Remove cloud servers,CBS volumes from previous runs
+---
+
+- name: Remove cloud servers,CBS volumes from previous runs
   hosts: workstation_nodes
   connection: ssh
   gather_facts: False
