@@ -14,11 +14,13 @@ Plans are to test these deployment setups:
 | 2.5  | Y  | X  | Y  |
 
 
-X - Test failing
-Y - Test passing
+* X - Test failing
+* Y - Test passing
 
 
-Structure for tests, variables will be grabbed from jenkins multi-configuration matrix:
+###Structure for tests
+
+Variables will be grabbed from jenkins multi-configuration matrix:
 
 ```
 $ runner_ansible.sh <OSVERSION> <HDPVERSION>
