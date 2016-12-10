@@ -84,23 +84,6 @@
 
     - debug: var=outputw['stdout_lines']
 
-    - name: Git clone ansible-hadoop repo to {{ deploytempfolder }}
-      git:
-        repo: https://github.com/rackerlabs/ansible-hadoop.git
-        dest: "{{ deploytempfolder }}"
-        refspec: '+refs/pull/*:refs/heads/*'
-
-    - name: Git checkout to the Pull request {{ git_pullrequest }} branch
-      command: git checkout pr/{{ git_pullrequest }}
-      args:
-        chdir: "{{ deploytempfolder }}"
-
-    - name: Run "ls -alh {{ deploytempfolder }}" on workstation server
-      command: ls -alh {{ deploytempfolder }}
-      register: outputfind
-
-    - debug: var=outputfind['stdout_lines']
-
     - name: "Install required yum packages on workstation"
       yum: name={{ item }} state=installed
       with_flattened:
@@ -125,6 +108,23 @@
 
     - name: "Set up pyrax credentials file"
       template: src=raxpub.j2 dest={{ rax_credentials_file }}
+
+    - name: Git clone ansible-hadoop repo to {{ deploytempfolder }}
+      git:
+        repo: https://github.com/rackerlabs/ansible-hadoop.git
+        dest: "{{ deploytempfolder }}"
+        refspec: '+refs/pull/*:refs/heads/*'
+
+    - name: Git checkout to the Pull request {{ git_pullrequest }} branch
+      command: git checkout pr/{{ git_pullrequest }}
+      args:
+        chdir: "{{ deploytempfolder }}"
+
+    - name: Run "ls -alh {{ deploytempfolder }}" on workstation server
+      command: ls -alh {{ deploytempfolder }}
+      register: outputfind
+
+    - debug: var=outputfind['stdout_lines']
 
     - name: "Make changes in {{ deploytempfolder }}/playbooks/group_vars/all.."
       command: sed -i "s/hadoop-ssh-key/{{ ssh_keyname }}/g" {{ deploytempfolder }}/playbooks/group_vars/all
