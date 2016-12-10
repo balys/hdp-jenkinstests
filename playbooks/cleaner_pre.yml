@@ -55,6 +55,6 @@
           "Content-Type" : "application/json"
           "X-Auth-Token" : "{{ hostvars.localhost.rax_auth_info.json.access.token.id }}"
       when:
-        - ( "slave-" in item.display_name ) or ( "master-" in item.display_name )
-        - item.display_name|length == 34 or item.display_name|length == 35
+        - ( "slave-" in item.display_name ) or ( "master-" in item.display_name ) or ( "edge-" in item.display_name )
+        - item.display_name|length == 33 or item.display_name|length == 34 or item.display_name|length == 35
       with_items: "{{ rax_cbs_volume_list.json.volumes }}"
