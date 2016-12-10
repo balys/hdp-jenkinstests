@@ -216,9 +216,6 @@
       register: workstation_hadoop_rax
       when: hadoop_build == "cdh"
 
-    - debug: var=workstation_hadoop_rax['stdout_lines']
-
-
 # Remove the servers created for this deployment
 - include: cleaner_post.yml
 
