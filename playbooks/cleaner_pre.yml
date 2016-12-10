@@ -8,7 +8,7 @@
     - name: Get a list of cloud servers created for the deployments in {{ rax_deploy_region }}
       shell: RAX_CREDS_FILE={{ rax_credentials_file }} RAX_REGION={{ rax_deploy_region }} python inventory/rax.py --list
       args:
-        chdir: "{{ deploytempfolder }}"
+        chdir: "{{ deploytempfolder }}/{{ releasefolder }}"
       register: rax_server_list
 
     - set_fact:
