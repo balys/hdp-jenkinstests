@@ -136,7 +136,6 @@
       command: sed -i "s/hadoop-ssh-key/{{ ssh_keyname }}/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
     - command: sed -i "s/localnet/{{ buildidentifier }}/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
     - command: sed -i "s/rax_region{{ ":" }} 'ORD'/rax_region{{ ":" }} '{{ rax_deploy_region }}' /g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
-    - command: sed -i "s/use_dns{{ ":" }} true/use_dns{{ ":" }} false/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
     - command: sed -i "s/distro{{ ":" }} 'hdp'/distro{{ ":" }} '{{ hadoop_build }}'/g" {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/all
 
     - name: "Update the {{ hadoop_build }} version to {{ hadoop_version }} in {{ deploytempfolder }}/{{ releasefolder }}/playbooks/group_vars/hortonworks"
