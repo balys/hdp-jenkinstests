@@ -129,6 +129,9 @@
       pip:
         name: "pyrax"
 
+    - name: "Force upgrade pyrax"
+      command: pip install pyrax --upgrade
+
     - name: "Set up pyrax credentials file"
       template: src=raxpub.j2 dest={{ rax_credentials_file }}
 
