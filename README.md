@@ -8,7 +8,6 @@ Plans are to test these deployment setups:
 
 | HDP Version  | CentOS7 | CentOS6 | Ubuntu |
 | ------------ | ------- | ------ | ------- |
-| 2.3  | Y  | Y  | Y  |
 | 2.4  | Y  | Y  | Y  |
 | 2.5  | Y  | Y  | Y  |
 
